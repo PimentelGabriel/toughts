@@ -1,15 +1,17 @@
 import express from "express";
 import hbs from "express-handlebars";
 
-import dotenv from "dotenv/config";
+import "dotenv/config";
 
-import session from "session-file-store";
-import FileStore from "session-file-store";
 import flash from "express-flash";
 
-import routesMAIN from "./routes/routesMAIN.js";
+import {mainRTS} from "./routes/main.rts.js";
 
 import {sequelize as conn} from "../db/conn.js";
+
+// Models
+import { Toughts } from "./models/Toughts.js";
+import { User } from "./models/User.js";
 
 const app = express();
 
@@ -37,14 +39,13 @@ app.use((req, res, next)=>{
 })
 
 
-app.use(routesMAIN);
-
-
-
+app.use(mainRTS);
 
 
 conn
-    .sync()
+    .sync({
+        force: true
+    })
     .then(()=>{
         app.listen(3000);
         console.log("App running in port 3000");
