@@ -1,28 +1,46 @@
 import express from "express";
-import hbs from 'express-handlebars';
+import hbs from "express-handlebars";
 
-import dotenv from 'dotenv/config';
+import dotenv from "dotenv/config";
 
-import session from 'session-file-store';
-import FileStore from 'session-file-store';
+import session from "session-file-store";
+import FileStore from "session-file-store";
 import flash from "express-flash";
 
-import routesMAIN from './routes/routesMAIN.js';
+import routesMAIN from "./routes/routesMAIN.js";
 
-import {sequelize as conn} from '../db/conn.js';
+import {sequelize as conn} from "../db/conn.js";
 
 const app = express();
 
-app.engine('handlerbars', hbs.engine());
-app.set('view engine', 'handlebars');
+app.engine("handlerbars", hbs.engine());
+app.set("view engine", "handlebars");
 
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }))
 
+app.use(express.static("../public"));
+app.use(flash())
+
+app.use((req, res, next)=>{
+
+    try {
+        if(req.session.userId){
+            res.locals.session = req.session; 
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    next();
+})
+
 
 app.use(routesMAIN);
+
+
+
 
 
 conn
